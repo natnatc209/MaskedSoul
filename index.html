@@ -6,10 +6,6 @@
     <title>MaskedSoul - 專業真人語音直播平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Montserrat:wght@600;800&display=swap');
@@ -43,14 +39,12 @@
 
     <div class="w-full max-w-[390px] h-[844px] bg-[#0b0c10] text-gray-100 rounded-[55px] shadow-3xl relative overflow-hidden flex flex-col border-[8px] border-gray-900" id="app-shell">
         
-        <!-- 🎬 1. 開場動畫 -->
-        <div id="intro-screen" class="absolute inset-0 z-[500] bg-[#0b0c10] flex flex-col items-center justify-center text-center">
+        <div id="intro-screen" class="absolute inset-0 z-[500] bg-[#0b0c10] flex flex-col items-center justify-center text-center transition-opacity duration-1000">
             <div class="mb-10 text-7xl animate-bounce">🎭</div>
             <h1 class="text-3xl font-black tracking-[0.4em] uppercase text-amber-500">MaskedSoul</h1>
             <p class="text-[10px] tracking-[0.3em] text-gray-500 mt-4 uppercase">Hearing Your Soul</p>
         </div>
 
-        <!-- 🏠 2. 直播大廳 (女性用戶視角) -->
         <div id="view-lobby" class="hidden flex-1 overflow-y-auto no-scrollbar flex flex-col relative w-full h-full pb-24 z-10">
             <div class="px-6 pt-14 pb-4 sticky top-0 bg-black/60 backdrop-blur-3xl z-30 flex justify-between items-center border-b border-white/5">
                 <div class="flex items-center space-x-2">
@@ -63,7 +57,6 @@
                 </div>
             </div>
 
-            <!-- ✨ AI 靈魂寄語 (測試 AI 是否通暢的關鍵) -->
             <div class="px-6 py-6 animate-fade">
                 <div class="glass p-5 rounded-[30px] border-l-4 border-amber-500">
                     <p class="text-[9px] font-black text-amber-500 uppercase mb-2 tracking-widest">✨ AI 靈魂寄語 Soul Whisper</p>
@@ -80,7 +73,6 @@
             </div>
         </div>
 
-        <!-- 🎙️ 3. 直播間 -->
         <div id="view-room" class="hidden flex-1 relative w-full h-full overflow-hidden flex flex-col z-[100] bg-black">
             <div class="absolute top-14 left-0 right-0 px-4 flex justify-between items-center z-20">
                 <button onclick="window.switchTab('lobby')" class="w-10 h-10 rounded-full glass flex items-center justify-center text-white"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
@@ -107,23 +99,20 @@
             </div>
         </div>
 
-        <!-- 💳 4. 錢包 -->
         <div id="view-wallet" class="hidden flex-1 overflow-y-auto no-scrollbar px-8 py-14 pb-[110px] z-10 text-center animate-fade">
             <h1 class="text-xl font-black text-amber-500 uppercase tracking-widest mb-10">Soul Bank</h1>
             <div class="w-full glass rounded-[40px] p-8 text-left border border-amber-500/20">
                 <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">當前餘額 Balance</span>
                 <h1 class="text-5xl font-black text-white flex items-center mt-2"><i data-lucide="diamond" class="w-7 h-7 mr-3 text-amber-500"></i><span id="profile-balance">0</span></h1>
-                <button onclick="window.executeTopup(1000)" class="mt-10 w-full py-5 bg-amber-500 text-black font-black rounded-2xl shadow-2xl active:scale-95 transition-all uppercase tracking-widest">立即儲值</button>
+                <button onclick="window.executeTopup(1000)" class="mt-10 w-full py-5 bg-amber-500 text-black font-black rounded-2xl shadow-2xl active:scale-95 transition-all uppercase tracking-widest">立即測試儲值</button>
             </div>
         </div>
 
-        <!-- 🛠️ 底部導覽 -->
         <div id="bottom-nav" class="hidden absolute bottom-0 left-0 right-0 h-[90px] bg-black/80 backdrop-blur-3xl border-t border-white/5 flex justify-around items-center px-10 z-50 rounded-b-[45px]">
             <button onclick="window.switchTab('lobby')" id="tab-lobby" class="flex flex-col items-center space-y-1 text-amber-500"><i data-lucide="compass" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase">發現</span></button>
             <button onclick="window.switchTab('wallet')" id="tab-wallet" class="flex flex-col items-center space-y-1 text-gray-600"><i data-lucide="credit-card" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase">錢包</span></button>
         </div>
 
-        <!-- 🎁 禮物 Modal -->
         <div id="giftModal" class="fixed inset-0 bg-black/90 hidden justify-center items-end z-[400] animate-fade">
             <div class="w-full glass rounded-t-[50px] p-10 border-t border-amber-500/20">
                 <div class="grid grid-cols-2 gap-6 mb-8">
@@ -139,36 +128,25 @@
         </div>
     </div>
 
-    <!-- 🧠 JavaScript 核心系統 -->
     <script>
         lucide.createIcons();
 
-        // 🛡️ 已經寫死咗你嘅 Vercel 網址，唔使再搵喇！
+        // 🛡️ 你的 Vercel API 網址 (保留不變)
         const VERCEL_PROXY = "https://masked-soul-api.vercel.app/api/chat";
 
-        // Firebase 初始化
-        const firebaseConfig = JSON.parse(__firebase_config);
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'maskedsoul-prod-ultimate';
-
-        let userId = null;
+        // 本地測試用的餘額變數
         let myBalance = 0;
 
-        // --- ✨ 核心 AI 調用 ---
+        // --- ✨ 核心 AI 調用 (保留不變) ---
         async function callGemini(prompt) {
             try {
-                // 發送請求畀你個 Vercel 後端
                 const res = await fetch(VERCEL_PROXY, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
                 
-                if (!res.ok) {
-                    throw new Error("Backend connection issue");
-                }
+                if (!res.ok) throw new Error("Backend connection issue");
                 
                 const data = await res.json();
                 return data.candidates?.[0]?.content?.parts?.[0]?.text || "...";
@@ -178,23 +156,26 @@
             }
         }
 
-        window.onload = async () => {
-            auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    userId = user.uid;
-                    syncWallet();
-                    finishIntro();
-                } else { 
-                    await auth.signInAnonymously(); 
-                }
-            });
+        // 網頁載入後，直接執行測試流程
+        window.onload = () => {
+            updateWalletUI(); // 初始化錢包文字
+            finishIntro();    // 播放開場並進入大廳
         };
 
+        // 更新 UI 上的餘額數字
+        function updateWalletUI() {
+            document.getElementById('lobby-balance').innerText = myBalance.toLocaleString();
+            document.getElementById('profile-balance').innerText = myBalance.toLocaleString();
+        }
+
+        // 開場動畫流程
         function finishIntro() {
             setTimeout(() => {
-                document.getElementById('intro-screen').classList.add('opacity-0');
+                const intro = document.getElementById('intro-screen');
+                intro.classList.add('opacity-0');
+                
                 setTimeout(async () => {
-                    document.getElementById('intro-screen').style.display = 'none';
+                    intro.style.display = 'none';
                     window.switchTab('lobby');
                     
                     // ✨ 測試對接：自動獲取 AI 寄語
@@ -204,6 +185,7 @@
             }, 2000);
         }
 
+        // 切換頁面 (大廳/錢包/直播間)
         window.switchTab = (name) => {
             ['lobby', 'wallet', 'room'].forEach(t => document.getElementById(`view-${t}`)?.classList.add('hidden'));
             document.getElementById(`view-${name}`).classList.remove('hidden');
@@ -213,54 +195,27 @@
             document.getElementById('tab-wallet').style.color = (name === 'wallet') ? 'var(--theme-gold)' : '#4b5563';
         };
 
+        // 進入直播間
         window.enterRoom = (title, img) => {
             document.getElementById('room-active-title').innerText = title;
             document.getElementById('active-host-avatar').src = img;
             window.switchTab('room');
         };
 
+        // 獲取 AI 破冰話題
         window.getIcebreaker = async () => {
             const chat = document.getElementById('room-msgs');
             chat.innerHTML += `<div class="text-amber-500 italic">✨ AI 正在感應話題...</div>`;
+            // 自動滾動到底部
+            chat.scrollTop = chat.scrollHeight; 
+            
             const topic = await callGemini("提供一個適合在深夜與女性展開的破冰話題，10字內。不要符號。");
-            chat.innerHTML += `<div class="p-3 bg-amber-500/10 rounded-2xl text-amber-200">✨ AI 推薦：${topic}</div>`;
+            chat.innerHTML += `<div class="p-3 mt-2 bg-amber-500/10 rounded-2xl text-amber-200">✨ AI 推薦：${topic}</div>`;
             chat.scrollTop = chat.scrollHeight;
         };
 
-        async function syncWallet() {
-            if (!userId) return;
-            db.doc(`artifacts/${appId}/users/${userId}/wallet/main`).onSnapshot((doc) => {
-                myBalance = doc.exists ? (doc.data().balance || 0) : 0;
-                document.getElementById('lobby-balance').innerText = myBalance.toLocaleString();
-                document.getElementById('profile-balance').innerText = myBalance.toLocaleString();
-            });
-        }
-
-        window.executeTopup = async (amt) => {
-            const walletDoc = db.doc(`artifacts/${appId}/users/${userId}/wallet/main`);
-            const snap = await walletDoc.get();
-            const current = snap.exists ? snap.data().balance : 0;
-            await walletDoc.set({ balance: current + amt }, { merge: true });
-            alert('🎉 能量補充成功！');
-        };
-
-        window.sendGift = async (name, price) => {
-            if (myBalance < price) return alert("能量不足，請先儲值。");
-            const walletDoc = db.doc(`artifacts/${appId}/users/${userId}/wallet/main`);
-            await walletDoc.update({ balance: myBalance - price });
-            window.closeModal('giftModal');
-            document.getElementById('room-msgs').innerHTML += `<div class="text-amber-400 font-bold">🎁 送出【${name}】！</div>`;
-            
-            if (name === '真理之鏡') {
-                const host = document.getElementById('active-host-avatar');
-                host.classList.remove('masked-avatar');
-                host.classList.add('unmask-effect');
-                setTimeout(() => { host.classList.add('masked-avatar'); host.classList.remove('unmask-effect'); }, 5000);
-            }
-        };
-
-        window.showModal = (id) => document.getElementById(id).classList.remove('hidden');
-        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
-    </script>
-</body>
-</html>
+        // 測試版：模擬儲值功能
+        window.executeTopup = (amt) => {
+            myBalance += amt;
+            updateWalletUI(); // 儲值後立即更新 UI
+            alert(`🎉 測試環境：能量補充 ${amt} 成功
