@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -38,6 +38,7 @@
             transition: background 1.5s ease;
         }
 
+        /* ✨ 視覺特效：Logo 呼吸 */
         @keyframes logoPulse {
             0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.4)); }
             50% { transform: scale(1.1); filter: drop-shadow(0 0 30px rgba(245, 158, 11, 0.8)); }
@@ -68,7 +69,7 @@
     <div class="w-full max-w-[390px] h-[844px] dynamic-bg text-gray-100 rounded-[50px] shadow-2xl relative overflow-hidden flex flex-col border-[8px] border-gray-900" id="app-shell">
         <div id="sparkle-container" class="absolute inset-0 pointer-events-none z-[1]"></div>
 
-        <!-- 1. 開場儀式 -->
+        <!-- 1. 開場儀式 (Splash) -->
         <div id="intro-screen" class="absolute inset-0 z-[500] bg-[#0b0c14] flex flex-col items-center justify-center text-center transition-opacity duration-1000">
             <div class="mb-10 relative flex items-center justify-center logo-anim">
                 <i data-lucide="venetian-mask" class="w-24 h-24 text-amber-500"></i>
@@ -87,6 +88,7 @@
                 <p class="text-[10px] text-gray-500 uppercase tracking-widest">Connect Your Soul Identity</p>
             </div>
             
+            <!-- 第三方登入 -->
             <div class="space-y-3 mb-10">
                 <button onclick="simulateSocialLogin('Apple')" class="social-btn w-full bg-white text-black py-4 rounded-full flex items-center justify-center font-bold text-sm shadow-xl">
                     <i data-lucide="apple" class="w-5 h-5 mr-3 fill-current"></i> 使用 Apple 帳號連結
@@ -96,20 +98,26 @@
                 </button>
             </div>
 
+            <!-- 手機註冊 -->
             <div class="space-y-4">
                 <input type="text" id="reg-name" placeholder="您的知音稱呼" class="w-full glass rounded-full px-6 py-4 text-sm text-white focus:outline-none border border-white/5">
-                <div class="flex space-x-3 mt-4">
-                    <button onclick="selectGender('male')" id="gender-male" class="gender-btn flex-1 glass rounded-3xl py-5 flex flex-col items-center">
-                        <i data-lucide="user-round" class="w-7 h-7 text-blue-400 mb-1"></i>
-                        <span class="text-xs font-bold text-blue-200">男神 (主播)</span>
-                    </button>
-                    <button onclick="selectGender('female')" id="gender-female" class="gender-btn flex-1 glass rounded-3xl py-5 flex flex-col items-center">
-                        <i data-lucide="user-round-plus" class="w-7 h-7 text-pink-400 mb-1"></i>
-                        <span class="text-xs font-bold text-pink-200">女神 (知音)</span>
-                    </button>
+                
+                <div class="space-y-2 mt-4">
+                    <p class="text-[10px] uppercase font-bold text-gray-500 text-center">選擇您的靈魂性別</p>
+                    <div class="flex space-x-3">
+                        <button onclick="selectGender('male')" id="gender-male" class="gender-btn flex-1 glass rounded-3xl py-5 flex flex-col items-center">
+                            <i data-lucide="user-round" class="w-7 h-7 text-blue-400 mb-1"></i>
+                            <span class="text-xs font-bold text-blue-200">男神 (主播)</span>
+                        </button>
+                        <button onclick="selectGender('female')" id="gender-female" class="gender-btn flex-1 glass rounded-3xl py-5 flex flex-col items-center">
+                            <i data-lucide="user-round-plus" class="w-7 h-7 text-pink-400 mb-1"></i>
+                            <span class="text-xs font-bold text-pink-200">女神 (知音)</span>
+                        </button>
+                    </div>
                 </div>
+
                 <button onclick="handleRegistration()" class="w-full py-5 rounded-full btn-theme text-white font-black text-xs tracking-widest uppercase shadow-2xl mt-6">
-                    開啟靈魂航行 | Start
+                    開啟靈魂航行 | Start Journey
                 </button>
             </div>
         </div>
@@ -121,16 +129,24 @@
                     <i data-lucide="mic-vocal" class="w-10 h-10 text-amber-500"></i>
                 </div>
                 <h2 class="text-2xl font-black text-white">主播考核中心</h2>
-                <p class="text-xs text-gray-400 mt-2">只有好聲音，才能守護靈魂。</p>
+                <p class="text-xs text-gray-400 mt-2">只有極致溫暖的聲音，才能守護靈魂。</p>
             </div>
-            <div class="glass p-6 rounded-3xl text-center bg-amber-500/5">
-                <p class="text-[10px] text-gray-500 mb-2 uppercase">您的收益分成權益</p>
-                <div class="flex justify-center items-center space-x-8">
-                    <div class="text-center"><span class="text-3xl font-black text-amber-500">60%</span><p class="text-[8px] text-gray-400">主播佣金</p></div>
-                    <div class="text-center"><span class="text-2xl font-black text-gray-700">40%</span><p class="text-[8px] text-gray-400">平台服務</p></div>
+
+            <div class="space-y-4">
+                <div class="glass p-5 rounded-3xl border-l-4 border-amber-500">
+                    <h3 class="text-sm font-bold text-white mb-1">任務：聲線初選</h3>
+                    <p class="text-[10px] text-gray-500">上傳一段您最擅長的讀詩或唱歌片段。</p>
+                    <button class="mt-3 text-[10px] font-bold text-amber-500 border border-amber-500/30 px-4 py-2 rounded-full">開始錄音</button>
+                </div>
+                <div class="glass p-6 rounded-3xl text-center bg-amber-500/5">
+                    <p class="text-[10px] text-gray-500 mb-2 uppercase">您的收益分成權益</p>
+                    <div class="flex justify-center items-center space-x-8">
+                        <div class="text-center"><span class="text-3xl font-black text-amber-500">60%</span><p class="text-[8px] text-gray-400">主播佣金</p></div>
+                        <div class="text-center"><span class="text-2xl font-black text-gray-700">40%</span><p class="text-[8px] text-gray-400">平台服務</p></div>
+                    </div>
                 </div>
             </div>
-            <button onclick="window.location.reload()" class="mt-10 py-4 glass rounded-full text-[10px] text-gray-500 font-bold">登出</button>
+            <button onclick="window.location.reload()" class="mt-10 py-4 glass rounded-full text-[10px] text-gray-500 font-bold">登出並返回</button>
         </div>
 
         <!-- 4. 直播大廳 (女性) -->
@@ -140,39 +156,40 @@
                     <i data-lucide="venetian-mask" class="w-6 h-6 text-amber-500"></i>
                     <span class="text-xl font-black text-white tracking-widest">靈魂港灣</span>
                 </div>
-                <div class="flex items-center bg-gray-800/80 px-4 py-2 rounded-full border border-white/10">
+                <button onclick="window.switchTab('wallet')" class="flex items-center bg-gray-800/80 px-4 py-2 rounded-full border border-white/10">
                     <i data-lucide="diamond" class="w-3 h-3 text-purple-400 mr-2"></i>
                     <span id="lobby-balance" class="text-[11px] font-black">0</span>
-                </div>
+                </button>
             </div>
 
-            <!-- ✨ AI 動態內容區 -->
+            <!-- ✨ AI 靈魂寄語 (從代理伺服器獲取) -->
             <div class="px-6 py-6 space-y-6">
                 <div class="glass p-5 rounded-[30px] border-l-4 border-rose-500">
                     <p class="text-[10px] font-bold text-rose-400 uppercase mb-2">✨ AI 靈魂寄語</p>
                     <p id="ai-greeting" class="text-xs text-gray-200 leading-relaxed italic">正在感應妳的頻率...</p>
                 </div>
                 
-                <div onclick="window.enterRoom('奧斯頓：深夜溫柔', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400')" class="relative w-full aspect-video rounded-3xl overflow-hidden glass cursor-pointer border border-white/10 shadow-2xl group">
-                    <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400" class="w-full h-full object-cover masked group-hover:scale-105 transition-transform">
+                <!-- 模擬房間 -->
+                <div onclick="window.enterRoom('奧斯頓：深夜溫柔傾聽', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400')" class="relative w-full aspect-video rounded-3xl overflow-hidden glass border border-white/10 shadow-2xl group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400" class="w-full h-full object-cover masked group-hover:scale-105 transition-transform duration-1000">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                     <div class="absolute bottom-4 left-5 flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-full border-2 border-amber-500 p-0.5"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100" class="w-full h-full rounded-full object-cover"></div>
-                        <div><p class="text-xs font-bold text-white">奧斯頓：深夜傾聽</p><p class="text-[9px] text-amber-400">1.2k 在線 | 唱歌中</p></div>
+                        <div><p class="text-xs font-bold text-white">奧斯頓：深夜讀詩</p><p class="text-[9px] text-amber-400">1.2k 在線 | 治癒中</p></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- 5. 直播間 (Room) -->
-        <div id="view-room" class="view-hidden flex-1 relative w-full h-full overflow-hidden flex flex-col z-[100] animate-fade-in bg-black">
+        <div id="view-room" class="hidden flex-1 relative w-full h-full overflow-hidden flex flex-col z-[100] animate-fade-in bg-black">
             <div class="absolute top-14 left-0 right-0 px-4 flex justify-between items-center z-20">
                 <button onclick="window.switchTab('lobby')" class="w-10 h-10 rounded-full glass flex items-center justify-center text-white"><i data-lucide="chevron-down" class="w-6 h-6"></i></button>
                 <div class="flex flex-col items-center">
                     <h2 id="room-title" class="text-sm font-black text-white">直播間</h2>
-                    <span class="text-[8px] text-rose-500 uppercase font-black animate-pulse">Live Resonance</span>
+                    <span class="text-[8px] text-rose-500 font-black animate-pulse">Live Resonance</span>
                 </div>
-                <button onclick="window.askAIP破冰()" class="w-10 h-10 rounded-full glass flex items-center justify-center text-amber-400"><i data-lucide="sparkles" class="w-5 h-5"></i></button>
+                <button onclick="window.getIcebreaker()" class="w-10 h-10 rounded-full glass flex items-center justify-center text-amber-400 border border-amber-500/20"><i data-lucide="sparkles" class="w-5 h-5"></i></button>
             </div>
             
             <div class="flex-1 flex flex-col items-center justify-center pt-20">
@@ -183,45 +200,41 @@
             </div>
 
             <div class="h-[300px] px-6 pb-10 flex flex-col justify-end relative z-20">
-                <div id="msgs" class="flex-1 overflow-y-auto no-scrollbar space-y-2 mb-4 text-xs"></div>
+                <div id="msgs" class="flex-1 overflow-y-auto no-scrollbar space-y-2 mb-4 text-xs">
+                    <div class="text-pink-300 italic opacity-60">📢 系統：送出【真理之鏡】可解鎖主播真容 5 秒</div>
+                </div>
                 <div class="flex items-center space-x-2">
-                    <input type="text" id="chatInput" placeholder="在此呢喃..." class="flex-1 glass rounded-full px-5 py-3.5 text-sm text-white focus:outline-none">
-                    <button onclick="window.sendChat()" class="w-12 h-12 rounded-full btn-theme flex items-center justify-center"><i data-lucide="gift" class="w-6 h-6 text-white"></i></button>
+                    <input type="text" id="chatInput" placeholder="與靈魂對話..." class="flex-1 glass rounded-full px-5 py-3.5 text-sm text-white focus:outline-none">
+                    <button class="w-12 h-12 rounded-full btn-theme flex items-center justify-center shadow-xl"><i data-lucide="gift" class="w-6 h-6 text-white"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- 6. 錢包 -->
-        <div id="view-wallet" class="hidden flex-1 overflow-y-auto no-scrollbar px-6 py-14 pb-[110px] z-10 animate-fade-in relative">
-            <h2 class="text-center font-black text-amber-500 mb-10 uppercase tracking-widest">My Soul Bank</h2>
-            <div class="bg-gradient-to-br from-indigo-900 via-[#1a1b3a] to-black p-8 rounded-[45px] border border-indigo-500/30 shadow-3xl">
-                <div class="flex justify-between items-end">
-                    <div class="flex flex-col">
-                        <span class="text-[10px] text-gray-500 uppercase font-bold mb-1">餘額 Balance</span>
-                        <h1 class="text-4xl font-black text-white flex items-center"><i data-lucide="diamond" class="w-6 h-6 mr-2 text-indigo-400"></i><span id="profile-balance">0</span></h1>
-                    </div>
-                    <button onclick="window.executeTopup(10000)" class="bg-white text-black px-8 py-3 rounded-[20px] text-xs font-black">儲值</button>
-                </div>
+        <!-- 6. 錢包 (Soul Bank) -->
+        <div id="view-wallet" class="hidden flex-1 overflow-y-auto no-scrollbar px-6 py-14 pb-[110px] z-10 animate-fade-in relative text-center">
+            <h2 class="font-black text-amber-500 mb-10 uppercase tracking-widest">心靈銀行 | My Bank</h2>
+            <div class="bg-gradient-to-br from-indigo-900 via-[#1a1b3a] to-black p-8 rounded-[45px] border border-indigo-500/30 shadow-3xl text-left">
+                <span class="text-[10px] text-gray-500 uppercase font-bold mb-1 block">當前餘額 Balance</span>
+                <h1 class="text-4xl font-black text-white flex items-center"><i data-lucide="diamond" class="w-6 h-6 mr-3 text-indigo-400"></i><span id="profile-balance">0</span></h1>
+                <button onclick="window.executeTopup(10000)" class="mt-8 w-full bg-white text-black py-4 rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all">儲值 10,000 靈魂點數</button>
             </div>
         </div>
 
-        <!-- 導航列 -->
+        <!-- 🛠️ 導航列 -->
         <div id="bottom-nav" class="hidden absolute bottom-0 left-0 right-0 h-[90px] bg-black/60 backdrop-blur-2xl border-t border-white/5 flex justify-around items-center px-10 z-50 rounded-b-[42px]">
-            <button onclick="window.switchTab('lobby')" id="nav-lobby" class="flex flex-col items-center space-y-1.5 text-rose-400"><i data-lucide="compass" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase">發現</span></button>
+            <button onclick="window.switchTab('lobby')" id="nav-lobby" class="flex flex-col items-center space-y-1.5 transition-all text-rose-400"><i data-lucide="compass" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase">發現</span></button>
             <button onclick="window.switchTab('wallet')" id="nav-wallet" class="flex flex-col items-center space-y-1.5 text-gray-600"><i data-lucide="credit-card" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase">錢包</span></button>
         </div>
-
-        <div id="langModal" class="fixed inset-0 bg-black/95 hidden justify-center items-center z-[600] p-10 backdrop-blur-3xl animate-fade-in"><div class="w-full max-w-[320px] bg-[#111827] border border-gray-700 rounded-[50px] p-10 text-center shadow-2xl relative"><h3 class="text-xl font-black text-white mb-10 tracking-widest uppercase">Global Language</h3><div class="space-y-4"><button onclick="window.closeModal('langModal')" class="w-full py-4 glass rounded-3xl text-sm font-black text-white flex justify-between px-8 border border-gray-700"><span>繁體中文 (香港)</span><span>HK</span></button></div></div></div>
     </div>
 
-    <!-- 🧠 JavaScript 核心系統 (已整合 Vercel 代理) -->
+    <!-- 🧠 JavaScript 核心系統 (對接 Vercel 代理) -->
     <script>
         lucide.createIcons();
 
-        // 🚨 老闆！呢度請填入你 Vercel 嘅網址，記得後面加返 /api/chat
+        // 🛡️ 老闆！Vercel 代理網址已填寫完畢
         const VERCEL_PROXY_URL = "https://masked-soul-api.vercel.app/api/chat";
 
-        // Firebase 初始化
+        // Firebase 初始化 (沙盒測試配置)
         const firebaseConfig = JSON.parse(__firebase_config);
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -231,7 +244,7 @@
         let userId = null;
         let userGender = null;
 
-        // --- ✨ 核心 AI 呼叫 Function (已經幫你改好連去 Vercel) ---
+        // --- ✨ 核心 AI 調用函數 (安全轉發) ---
         async function callGemini(prompt) {
             try {
                 const response = await fetch(VERCEL_PROXY_URL, {
@@ -241,26 +254,36 @@
                         contents: [{ parts: [{ text: prompt }] }]
                     })
                 });
+                
+                if (!response.ok) throw new Error("代理響應異常");
+                
                 const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "聽見妳的心跳聲了。";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "在這裡，聽見妳的心跳。";
             } catch (e) {
-                console.error("AI 呼叫失敗，請檢查 Vercel 網址:", e);
-                return "在這裡，妳並不孤單。";
+                console.error("AI 呼叫失敗:", e);
+                return "靜謐的夜，我會在這裡陪妳。";
             }
         }
 
         window.onload = async () => {
             createFX();
+            
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
                     userId = user.uid;
-                    const profile = await db.doc(`artifacts/${appId}/users/${userId}/profile/main`).get();
+                    const profileRef = db.doc(`artifacts/${appId}/users/${userId}/profile/main`);
+                    const profile = await profileRef.get();
+                    
                     if (profile.exists) {
                         userGender = profile.data().gender;
                         finishIntro();
-                    } else { finishIntro(true); }
+                    } else {
+                        finishIntro(true); // 顯示註冊
+                    }
                     syncWallet();
-                } else { await auth.signInAnonymously(); }
+                } else {
+                    await auth.signInAnonymously();
+                }
             });
         };
 
@@ -269,8 +292,11 @@
                 document.getElementById('intro-screen').classList.add('opacity-0');
                 setTimeout(() => {
                     document.getElementById('intro-screen').style.display = 'none';
-                    if (showAuth) { document.getElementById('view-auth').classList.remove('hidden'); } 
-                    else { routeUser(); }
+                    if (showAuth) {
+                        document.getElementById('view-auth').classList.remove('hidden');
+                    } else {
+                        routeUser();
+                    }
                 }, 1000);
             }, 2500);
         }
@@ -284,9 +310,10 @@
                 document.getElementById('bottom-nav').classList.remove('hidden');
                 document.getElementById('bottom-nav').classList.add('flex');
                 
-                // ✨ 進入大廳後，自動用 AI 生成一段寄語
-                const greeting = await callGemini("妳是一位暖心男神。請用 20 字內感性地向深夜寂寞的女性用戶打個招呼，要溫柔且有深度。");
-                document.getElementById('ai-greeting').innerText = greeting;
+                // ✨ AI 自動生成一段靈魂寄語
+                const greeting = await callGemini("妳是一位極具磁性的溫柔男神。請向深夜寂寞的女性用戶說一句不超過 20 字的感性寄語。");
+                const el = document.getElementById('ai-greeting');
+                if (el) el.innerText = greeting;
             }
         }
 
@@ -299,7 +326,11 @@
         window.handleRegistration = async () => {
             const name = document.getElementById('reg-name').value.trim();
             if (!name || !userGender) return alert("請填寫稱呼並選擇性別。");
-            await db.doc(`artifacts/${appId}/users/${userId}/profile/main`).set({ name, gender: userGender, registeredAt: firebase.firestore.FieldValue.serverTimestamp() });
+
+            await db.doc(`artifacts/${appId}/users/${userId}/profile/main`).set({
+                name, gender: userGender, registeredAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
             document.getElementById('view-auth').classList.add('hidden');
             routeUser();
         };
@@ -310,19 +341,22 @@
             window.switchTab('room');
         };
 
-        window.switchTab = (name) => {
-            ['lobby', 'wallet', 'room'].forEach(t => document.getElementById(`view-${t}`)?.classList.add('hidden'));
-            document.getElementById(`view-${name}`).classList.remove('hidden');
-            const nav = document.getElementById('bottom-nav');
-            if(name === 'room') nav.classList.add('hidden'); else nav.classList.remove('hidden');
+        window.getIcebreaker = async () => {
+            const msgs = document.getElementById('msgs');
+            msgs.innerHTML += `<div class="text-amber-400 italic">✨ AI 正在尋找話題...</div>`;
+            const topic = await callGemini("提供一個適合在深夜與女性展開的破冰話題，15字內。");
+            msgs.innerHTML += `<div class="p-2 bg-amber-500/10 rounded-lg text-amber-200">✨ AI 推薦話題：${topic}</div>`;
+            msgs.scrollTop = msgs.scrollHeight;
         };
 
         async function syncWallet() {
             if (!userId) return;
             db.doc(`artifacts/${appId}/users/${userId}/wallet/main`).onSnapshot((doc) => {
                 const bal = doc.exists ? (doc.data().balance || 0) : 0;
-                document.getElementById('lobby-balance').innerText = bal.toLocaleString();
-                document.getElementById('profile-balance').innerText = bal.toLocaleString();
+                const lobbyBal = document.getElementById('lobby-balance');
+                if (lobbyBal) lobbyBal.innerText = bal.toLocaleString();
+                const profileBal = document.getElementById('profile-balance');
+                if (profileBal) profileBal.innerText = bal.toLocaleString();
             });
         }
 
@@ -334,9 +368,22 @@
             alert('🎉 儲值成功！');
         };
 
+        window.switchTab = (name) => {
+            ['lobby', 'wallet', 'room'].forEach(t => document.getElementById(`view-${t}`)?.classList.add('hidden'));
+            const target = document.getElementById(`view-${name}`);
+            if (target) target.classList.remove('hidden');
+            const nav = document.getElementById('bottom-nav');
+            if (name === 'room') nav.classList.add('hidden'); else nav.classList.remove('hidden');
+            
+            const l = document.getElementById('nav-lobby'), w = document.getElementById('nav-wallet');
+            if(l) l.classList.toggle('text-rose-400', name === 'lobby');
+            if(w) w.classList.toggle('text-rose-400', name === 'wallet');
+        };
+
         function createFX() {
             const sc = document.getElementById('sparkle-container');
-            for(let i=0; i<30; i++) {
+            sc.innerHTML = '';
+            for(let i=0; i<35; i++) {
                 const s = document.createElement('div'); s.className = 'sparkle';
                 s.style.width = s.style.height = Math.random()*3+1+'px';
                 s.style.top = Math.random()*100+'%'; s.style.left = Math.random()*100+'%';
@@ -344,15 +391,6 @@
                 sc.appendChild(s);
             }
         }
-
-        window.showModal = (id) => document.getElementById(id).classList.remove('hidden');
-        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
     </script>
 </body>
-</html>ssList.add('hidden');
-    </script>
-</body>
-
 </html>
-
-
