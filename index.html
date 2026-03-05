@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -88,7 +88,6 @@
                 <p class="text-[10px] text-gray-500 uppercase tracking-widest">Connect Your Soul Identity</p>
             </div>
             
-            <!-- 第三方登入 -->
             <div class="space-y-3 mb-10">
                 <button onclick="simulateSocialLogin('Apple')" class="social-btn w-full bg-white text-black py-4 rounded-full flex items-center justify-center font-bold text-sm shadow-xl">
                     <i data-lucide="apple" class="w-5 h-5 mr-3 fill-current"></i> 使用 Apple 帳號連結
@@ -98,7 +97,6 @@
                 </button>
             </div>
 
-            <!-- 手機註冊 -->
             <div class="space-y-4">
                 <input type="text" id="reg-name" placeholder="您的知音稱呼" class="w-full glass rounded-full px-6 py-4 text-sm text-white focus:outline-none border border-white/5">
                 
@@ -131,19 +129,11 @@
                 <h2 class="text-2xl font-black text-white">主播考核中心</h2>
                 <p class="text-xs text-gray-400 mt-2">只有極致溫暖的聲音，才能守護靈魂。</p>
             </div>
-
-            <div class="space-y-4">
-                <div class="glass p-5 rounded-3xl border-l-4 border-amber-500">
-                    <h3 class="text-sm font-bold text-white mb-1">任務：聲線初選</h3>
-                    <p class="text-[10px] text-gray-500">上傳一段您最擅長的讀詩或唱歌片段。</p>
-                    <button class="mt-3 text-[10px] font-bold text-amber-500 border border-amber-500/30 px-4 py-2 rounded-full">開始錄音</button>
-                </div>
-                <div class="glass p-6 rounded-3xl text-center bg-amber-500/5">
-                    <p class="text-[10px] text-gray-500 mb-2 uppercase">您的收益分成權益</p>
-                    <div class="flex justify-center items-center space-x-8">
-                        <div class="text-center"><span class="text-3xl font-black text-amber-500">60%</span><p class="text-[8px] text-gray-400">主播佣金</p></div>
-                        <div class="text-center"><span class="text-2xl font-black text-gray-700">40%</span><p class="text-[8px] text-gray-400">平台服務</p></div>
-                    </div>
+            <div class="glass p-6 rounded-3xl text-center bg-amber-500/5">
+                <p class="text-[10px] text-gray-500 mb-2 uppercase">您的收益分成權益</p>
+                <div class="flex justify-center items-center space-x-8">
+                    <div class="text-center"><span class="text-3xl font-black text-amber-500">60%</span><p class="text-[8px] text-gray-400">主播佣金</p></div>
+                    <div class="text-center"><span class="text-2xl font-black text-gray-700">40%</span><p class="text-[8px] text-gray-400">平台服務</p></div>
                 </div>
             </div>
             <button onclick="window.location.reload()" class="mt-10 py-4 glass rounded-full text-[10px] text-gray-500 font-bold">登出並返回</button>
@@ -162,16 +152,15 @@
                 </button>
             </div>
 
-            <!-- ✨ AI 靈魂寄語 (從代理伺服器獲取) -->
+            <!-- ✨ AI 靈魂寄語 -->
             <div class="px-6 py-6 space-y-6">
                 <div class="glass p-5 rounded-[30px] border-l-4 border-rose-500">
                     <p class="text-[10px] font-bold text-rose-400 uppercase mb-2">✨ AI 靈魂寄語</p>
                     <p id="ai-greeting" class="text-xs text-gray-200 leading-relaxed italic">正在感應妳的頻率...</p>
                 </div>
                 
-                <!-- 模擬房間 -->
                 <div onclick="window.enterRoom('奧斯頓：深夜溫柔傾聽', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400')" class="relative w-full aspect-video rounded-3xl overflow-hidden glass border border-white/10 shadow-2xl group cursor-pointer">
-                    <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400" class="w-full h-full object-cover masked group-hover:scale-105 transition-transform duration-1000">
+                    <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400" class="absolute inset-0 w-full h-full object-cover masked group-hover:scale-105 transition-transform duration-1000">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                     <div class="absolute bottom-4 left-5 flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-full border-2 border-amber-500 p-0.5"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100" class="w-full h-full rounded-full object-cover"></div>
@@ -210,9 +199,9 @@
             </div>
         </div>
 
-        <!-- 6. 錢包 (Soul Bank) -->
+        <!-- 6. 錢包 -->
         <div id="view-wallet" class="hidden flex-1 overflow-y-auto no-scrollbar px-6 py-14 pb-[110px] z-10 animate-fade-in relative text-center">
-            <h2 class="font-black text-amber-500 mb-10 uppercase tracking-widest">心靈銀行 | My Bank</h2>
+            <h2 class="font-black text-amber-500 mb-10 uppercase tracking-widest">My Soul Bank</h2>
             <div class="bg-gradient-to-br from-indigo-900 via-[#1a1b3a] to-black p-8 rounded-[45px] border border-indigo-500/30 shadow-3xl text-left">
                 <span class="text-[10px] text-gray-500 uppercase font-bold mb-1 block">當前餘額 Balance</span>
                 <h1 class="text-4xl font-black text-white flex items-center"><i data-lucide="diamond" class="w-6 h-6 mr-3 text-indigo-400"></i><span id="profile-balance">0</span></h1>
@@ -227,14 +216,14 @@
         </div>
     </div>
 
-    <!-- 🧠 JavaScript 核心系統 (對接 Vercel 代理) -->
+    <!-- 🧠 JavaScript 核心系統 -->
     <script>
         lucide.createIcons();
 
-        // 🛡️ 老闆！Vercel 代理網址已填寫完畢
+        // 🛡️ 這裡是您的完整 Vercel 代理路徑
         const VERCEL_PROXY_URL = "https://masked-soul-api.vercel.app/api/chat";
 
-        // Firebase 初始化 (沙盒測試配置)
+        // Firebase 初始化 ( Rule 1 & 3 )
         const firebaseConfig = JSON.parse(__firebase_config);
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -244,10 +233,13 @@
         let userId = null;
         let userGender = null;
 
-        // --- ✨ 核心 AI 調用函數 (安全轉發) ---
+        // --- ✨ 核心 AI 調用函數 ---
         async function callGemini(prompt) {
             try {
-                const response = await fetch(VERCEL_PROXY_URL, {
+                // 檢查 VERCEL_PROXY_URL 是否包含 https://
+                const targetUrl = VERCEL_PROXY_URL.startsWith('http') ? VERCEL_PROXY_URL : `https://${VERCEL_PROXY_URL}`;
+                
+                const response = await fetch(targetUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -255,13 +247,16 @@
                     })
                 });
                 
-                if (!response.ok) throw new Error("代理響應異常");
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errText}`);
+                }
                 
                 const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "在這裡，聽見妳的心跳。";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "聽見妳的心跳聲了。";
             } catch (e) {
-                console.error("AI 呼叫失敗:", e);
-                return "靜謐的夜，我會在這裡陪妳。";
+                console.error("AI 呼叫失敗，請檢查 Vercel 部署:", e);
+                return "在這裡，妳並不孤單。 (代理伺服器連結中...)";
             }
         }
 
@@ -278,7 +273,7 @@
                         userGender = profile.data().gender;
                         finishIntro();
                     } else {
-                        finishIntro(true); // 顯示註冊
+                        finishIntro(true);
                     }
                     syncWallet();
                 } else {
@@ -310,8 +305,8 @@
                 document.getElementById('bottom-nav').classList.remove('hidden');
                 document.getElementById('bottom-nav').classList.add('flex');
                 
-                // ✨ AI 自動生成一段靈魂寄語
-                const greeting = await callGemini("妳是一位極具磁性的溫柔男神。請向深夜寂寞的女性用戶說一句不超過 20 字的感性寄語。");
+                // 進入大廳後呼叫 AI
+                const greeting = await callGemini("妳是一位磁性、溫柔的男神主播。請向深夜寂寞的女性用戶說一句感性的歡迎詞，不超過 20 字。");
                 const el = document.getElementById('ai-greeting');
                 if (el) el.innerText = greeting;
             }
@@ -343,9 +338,9 @@
 
         window.getIcebreaker = async () => {
             const msgs = document.getElementById('msgs');
-            msgs.innerHTML += `<div class="text-amber-400 italic">✨ AI 正在尋找話題...</div>`;
+            msgs.innerHTML += `<div class="text-amber-400 italic">✨ AI 正在感應話題...</div>`;
             const topic = await callGemini("提供一個適合在深夜與女性展開的破冰話題，15字內。");
-            msgs.innerHTML += `<div class="p-2 bg-amber-500/10 rounded-lg text-amber-200">✨ AI 推薦話題：${topic}</div>`;
+            msgs.innerHTML += `<div class="p-2 bg-amber-500/10 rounded-lg text-amber-200">✨ 男神推薦話題：${topic}</div>`;
             msgs.scrollTop = msgs.scrollHeight;
         };
 
@@ -353,10 +348,8 @@
             if (!userId) return;
             db.doc(`artifacts/${appId}/users/${userId}/wallet/main`).onSnapshot((doc) => {
                 const bal = doc.exists ? (doc.data().balance || 0) : 0;
-                const lobbyBal = document.getElementById('lobby-balance');
-                if (lobbyBal) lobbyBal.innerText = bal.toLocaleString();
-                const profileBal = document.getElementById('profile-balance');
-                if (profileBal) profileBal.innerText = bal.toLocaleString();
+                document.getElementById('lobby-balance').innerText = bal.toLocaleString();
+                document.getElementById('profile-balance').innerText = bal.toLocaleString();
             });
         }
 
@@ -365,7 +358,7 @@
             const snap = await walletDoc.get();
             const current = snap.exists ? snap.data().balance : 0;
             await walletDoc.set({ balance: current + amt }, { merge: true });
-            alert('🎉 儲值成功！');
+            alert('🎉 能量補充成功！');
         };
 
         window.switchTab = (name) => {
