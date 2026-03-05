@@ -6,39 +6,20 @@
     <title>MaskedSoul - 專業真人語音直播平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Montserrat:wght@600;800&display=swap');
-        
-        :root {
-            --theme-pink: #ec4899;
-            --theme-gold: #f59e0b;
-            --theme-dark: #0f172a;
-        }
-
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #000;
-            display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; margin: 0;
-            overflow: hidden;
-        }
-        
+        :root { --theme-pink: #ec4899; --theme-gold: #f59e0b; --theme-dark: #0f172a; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; overflow: hidden; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        
-        /* 蒙面特效 */
         .masked-avatar { filter: brightness(0.3) blur(22px); transition: all 1.5s ease; }
         .unmask-effect { filter: brightness(1) blur(0px); border: 2px solid var(--theme-gold); box-shadow: 0 0 20px var(--theme-gold); }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
     </style>
 </head>
 <body>
-
     <div class="w-full max-w-[390px] h-[844px] bg-[#0b0c10] text-gray-100 rounded-[55px] shadow-3xl relative overflow-hidden flex flex-col border-[8px] border-gray-900" id="app-shell">
-        
         <div id="intro-screen" class="absolute inset-0 z-[500] bg-[#0b0c10] flex flex-col items-center justify-center text-center transition-opacity duration-1000">
             <div class="mb-10 text-7xl animate-bounce">🎭</div>
             <h1 class="text-3xl font-black tracking-[0.4em] uppercase text-amber-500">MaskedSoul</h1>
@@ -56,14 +37,12 @@
                     <span id="lobby-balance" class="text-[11px] font-black">0</span>
                 </div>
             </div>
-
             <div class="px-6 py-6 animate-fade">
                 <div class="glass p-5 rounded-[30px] border-l-4 border-amber-500">
                     <p class="text-[9px] font-black text-amber-500 uppercase mb-2 tracking-widest">✨ AI 靈魂寄語 Soul Whisper</p>
                     <p id="ai-status-text" class="text-xs text-gray-200 leading-relaxed italic">正在感應妳的頻率...</p>
                 </div>
             </div>
-
             <div class="px-6 grid grid-cols-2 gap-4">
                 <div onclick="window.enterRoom('奧斯頓：深夜溫柔', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400')" class="relative aspect-[3/4] rounded-3xl overflow-hidden glass border border-white/5 group cursor-pointer shadow-xl">
                     <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400" class="absolute inset-0 w-full h-full object-cover masked-avatar">
@@ -82,14 +61,12 @@
                 </div>
                 <button onclick="window.getIcebreaker()" class="w-10 h-10 rounded-full glass flex items-center justify-center text-amber-500"><i data-lucide="sparkles" class="w-5 h-5"></i></button>
             </div>
-            
             <div class="flex-1 flex flex-col items-center justify-center relative pt-20">
                 <div class="relative w-40 h-40">
                     <img id="active-host-avatar" src="" class="w-full h-full rounded-full object-cover masked-avatar">
                     <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-amber-500 text-[8px] font-black px-3 py-1 rounded-full text-black">MASKED HOST</div>
                 </div>
             </div>
-
             <div class="h-[300px] px-6 pb-10 flex flex-col justify-end relative z-20">
                 <div id="room-msgs" class="flex-1 overflow-y-auto no-scrollbar mb-4 space-y-2 text-xs"></div>
                 <div class="flex items-center space-x-2">
@@ -130,14 +107,9 @@
 
     <script>
         lucide.createIcons();
-
-        // 🛡️ 你的 Vercel API 網址 (保留不變)
         const VERCEL_PROXY = "https://masked-soul-api.vercel.app/api/chat";
-
-        // 本地測試用的餘額變數
         let myBalance = 0;
 
-        // --- ✨ 核心 AI 調用 (保留不變) ---
         async function callGemini(prompt) {
             try {
                 const res = await fetch(VERCEL_PROXY, {
@@ -145,78 +117,64 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
-                
-                if (!res.ok) throw new Error("Backend connection issue");
-                
                 const data = await res.json();
                 return data.candidates?.[0]?.content?.parts?.[0]?.text || "...";
             } catch (e) {
-                console.error("AI Error:", e);
-                return "在這裡，妳的心跳我聽得見。 (AI連線中...)";
+                return "在這裡，妳的心跳我聽得見。";
             }
         }
 
-        // 網頁載入後，直接執行測試流程
-        window.onload = () => {
-            updateWalletUI(); // 初始化錢包文字
-            finishIntro();    // 播放開場並進入大廳
-        };
-
-        // 更新 UI 上的餘額數字
+        window.onload = () => { updateWalletUI(); finishIntro(); };
         function updateWalletUI() {
             document.getElementById('lobby-balance').innerText = myBalance.toLocaleString();
             document.getElementById('profile-balance').innerText = myBalance.toLocaleString();
         }
-
-        // 開場動畫流程
         function finishIntro() {
             setTimeout(() => {
                 const intro = document.getElementById('intro-screen');
                 intro.classList.add('opacity-0');
-                
                 setTimeout(async () => {
                     intro.style.display = 'none';
                     window.switchTab('lobby');
-                    
-                    // ✨ 測試對接：自動獲取 AI 寄語
                     const msg = await callGemini("妳是一位極具磁性的溫柔男神。請向深夜寂寞的女性用戶說一句感性的歡迎詞，不超過 15 字。不要符號。");
                     document.getElementById('ai-status-text').innerText = msg;
                 }, 1000);
             }, 2000);
         }
-
-        // 切換頁面 (大廳/錢包/直播間)
         window.switchTab = (name) => {
             ['lobby', 'wallet', 'room'].forEach(t => document.getElementById(`view-${t}`)?.classList.add('hidden'));
             document.getElementById(`view-${name}`).classList.remove('hidden');
             const nav = document.getElementById('bottom-nav');
             if (name === 'room') nav.classList.add('hidden'); else nav.classList.remove('hidden');
-            document.getElementById('tab-lobby').style.color = (name === 'lobby') ? 'var(--theme-gold)' : '#4b5563';
-            document.getElementById('tab-wallet').style.color = (name === 'wallet') ? 'var(--theme-gold)' : '#4b5563';
+            document.getElementById('tab-lobby').style.color = (name === 'lobby') ? '#f59e0b' : '#4b5563';
+            document.getElementById('tab-wallet').style.color = (name === 'wallet') ? '#f59e0b' : '#4b5563';
         };
-
-        // 進入直播間
         window.enterRoom = (title, img) => {
             document.getElementById('room-active-title').innerText = title;
             document.getElementById('active-host-avatar').src = img;
             window.switchTab('room');
         };
-
-        // 獲取 AI 破冰話題
         window.getIcebreaker = async () => {
             const chat = document.getElementById('room-msgs');
             chat.innerHTML += `<div class="text-amber-500 italic">✨ AI 正在感應話題...</div>`;
-            // 自動滾動到底部
-            chat.scrollTop = chat.scrollHeight; 
-            
             const topic = await callGemini("提供一個適合在深夜與女性展開的破冰話題，10字內。不要符號。");
-            chat.innerHTML += `<div class="p-3 mt-2 bg-amber-500/10 rounded-2xl text-amber-200">✨ AI 推薦：${topic}</div>`;
+            chat.innerHTML += `<div class="p-3 bg-amber-500/10 rounded-2xl text-amber-200">✨ AI 推薦：${topic}</div>`;
             chat.scrollTop = chat.scrollHeight;
         };
-
-        // 測試版：模擬儲值功能
-        window.executeTopup = (amt) => {
-            myBalance += amt;
-            updateWalletUI(); // 儲值後立即更新 UI
-            alert(`🎉 測試環境：能量補充 ${amt} 成功
+        window.executeTopup = (amt) => { myBalance += amt; updateWalletUI(); alert('🎉 測試儲值成功！'); };
+        window.sendGift = (name, price) => {
+            if (myBalance < price) return alert("能量不足！");
+            myBalance -= price; updateWalletUI(); window.closeModal('giftModal');
+            document.getElementById('room-msgs').innerHTML += `<div class="text-amber-400 font-bold">🎁 送出【${name}】！</div>`;
+            if (name === '真理之鏡') {
+                const host = document.getElementById('active-host-avatar');
+                host.classList.remove('masked-avatar'); host.classList.add('unmask-effect');
+                setTimeout(() => { host.classList.add('masked-avatar'); host.classList.remove('unmask-effect'); }, 5000);
+            }
+        };
+        window.showModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+    </script>
+</body>
+</html>
 
