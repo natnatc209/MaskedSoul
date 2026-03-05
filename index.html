@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaskedSoul - 全球真人蒙面語音直播平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Montserrat:wght@400;700;900&display=swap');
+        
+        :root {
+            --theme-primary: #fb7185;
+            --theme-secondary: #fecdd3;
+            --theme-bg: #1a0b1c;
+            --sparkle-color: 251, 113, 133;
+            --brand-gold: #f59e0b;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', 'Montserrat', sans-serif;
+            background-color: #000;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; margin: 0;
+            overflow: hidden;
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .dynamic-bg {
+            background: linear-gradient(135deg, #050505 0%, var(--theme-bg) 100%);
+            transition: background 1.5s ease;
+        }
+
+        /* ✨ 視覺特效：Logo 呼吸 */
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.4)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 30px rgba(245, 158, 11, 0.8)); }
+        }
+        .logo-anim { animation: logoPulse 5s infinite ease-in-out; }
+
+        @keyframes slowTwinkle { 0%, 100% { opacity: 0; transform: scale(0.4); } 50% { opacity: 0.6; transform: scale(1.2); } }
+        .sparkle { position: absolute; background: white; border-radius: 50%; pointer-events: none; z-index: 1; box-shadow: 0 0 6px rgba(var(--sparkle-color), 0.6); animation: slowTwinkle var(--duration) infinite ease-in-out; }
+
+        .masked { filter: brightness(0.3) blur(22px); transition: all 2s ease; }
+        .unmasking { filter: brightness(1) blur(0px); box-shadow: 0 0 30px var(--theme-primary); border: 2px solid var(--theme-primary); }
+
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .btn-theme { background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-bg) 100%); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); transition: all 0.3s ease; }
+
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+
+        .gender-btn { transition: all 0.3s; border: 2px solid transparent; }
+        .gender-btn.active { border-color: var(--theme-primary); background: rgba(251, 113, 131, 0.1); }
+
+        .social-btn { transition: all 0.3s ease; }
+        .social-btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="w-full max-w-[390px] h-[844px] dynamic-bg text-gray-100 rounded-[50px] shadow-2xl relative overflow-hidden flex flex-col border-[8px] border-gray-900" id="app-shell">
+        
+        <div id="sparkle-container" class="absolute inset-0 pointer-events-none z-[1]"></div>
+
+        <!-- ==================== ✨ 1. 開場儀式 (Splash) ==================== -->
+        <div id="intro-screen" class="absolute inset-0 z-[500] bg-[#0b0c14] flex flex-col items-center justify-center text-center transition-opacity duration-1000">
+            <div class="mb-10 relative flex items-center justify-center logo-anim">
+                <i data-lucide="venetian-mask" class="w-24 h-24 text-amber-500"></i>
+                <i data-lucide="sparkles" class="w-10 h-10 text-white absolute -top-2 -right-2 animate-pulse"></i>
+            </div>
+            <div class="space-y-6">
+                <h1 class="text-4xl font-black tracking-[0.4em] uppercase text-white">MaskedSoul</h1>
+                <p class="text-lg font-bold tracking-[0.2em] text-gray-300">以聲會友 · 聽見靈魂</p>
+            </div>
+        </div>
+
+        <!-- ==================== 🌍 註冊與帳號連結 (Google/FB/Apple) ==================== -->
+        <div id="view-auth" class="flex-1 overflow-y-auto no-scrollbar px-8 py-14 flex flex-col relative z-10 hidden">
+            <div class="mb-10 text-center">
+                <h2 class="text-3xl font-black text-white mb-2">揭開面具</h2>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Connect Your Soul Identity</p>
+            </div>
+            
+            <!-- 第三方帳號登入區域 -->
+            <div class="space-y-3 mb-10">
+                <button onclick="simulateSocialLogin('Apple')" class="social-btn w-full bg-white text-black py-4 rounded-full flex items-center justify-center font-bold text-sm shadow-xl">
+                    <i data-lucide="apple" class="w-5 h-5 mr-3 fill-current"></i> 使用 Apple 帳號連結
+                </button>
+                <button onclick="simulateSocialLogin('Google')" class="social-btn w-full bg-slate-800 text-white py-4 rounded-full flex items-center justify-center font-bold text-sm border border-white/10 shadow-xl">
+                    <i data-lucide="globe" class="w-5 h-5 mr-3 text-red-400"></i> 使用 Google 帳號連結
+                </button>
+                <button onclick="simulateSocialLogin('Facebook')" class="social-btn w-full bg-[#1877F2] text-white py-4 rounded-full flex items-center justify-center font-bold text-sm shadow-xl">
+                    <i data-lucide="facebook" class="w-5 h-5 mr-3 fill-current"></i> 使用 Facebook 帳號連結
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="flex-1 h-px bg-white/10"></div>
+                <span class="text-[10px] text-gray-600 font-bold uppercase">或使用手機註冊</span>
+                <div class="flex-1 h-px bg-white/10"></div>
+            </div>
+
+            <!-- 手機註冊表單 -->
+            <div class="space-y-4">
+                <div class="space-y-1">
+                    <input type="text" id="reg-name" placeholder="您的知音稱呼" class="w-full glass rounded-full px-6 py-4 text-sm text-white focus:outline-none border border-white/5">
+                </div>
+                <div class="space-y-1">
+                    <input type="tel" id="reg-phone" placeholder="電話號碼 (OTP 驗證)" class="w-full glass rounded-full px-6 py-4 text-sm text-white focus:outline-none border border-white/5">
+                </div>
+                
+                <!-- 性別分流 -->
+                <div class="space-y-2 mt-4">
+                    <p class="text-[10px] uppercase font-bold text-gray-500 text-center">選擇您的靈魂性別</p>
+                    <div class="flex space-x-3">
+                        <button onclick="selectGender('male')" id="gender-male" class="gender-btn flex-1 glass rounded-3xl py-5 flex flex-col items-center">
+                            <i data-lucide="user-round" class="w-7 h-7 text-blue-400 mb-1"></i>
+                            <span class="text-xs font-bold text-blue-200">男神 (主播)</span>
+                        </button>
+                        <button onclick="selectGender('female')" id="gender-female" class="gender-btn flex-1 glass rounded-3xl py-5 flex flex-col items-center">
+                            <i data-lucide="user-round-plus" class="w-7 h-7 text-pink-400 mb-1"></i>
+                            <span class="text-xs font-bold text-pink-200">女神 (知音)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="handleRegistration()" class="w-full py-5 rounded-full btn-theme text-white font-black text-xs tracking-widest uppercase shadow-2xl mt-6">
+                    開啟靈魂航行 | Start Journey
+                </button>
+            </div>
+            
+            <p class="text-[9px] text-gray-600 text-center mt-8 px-4">註冊即代表您同意《MaskedSoul 使用協議》與《個人隱私條款》。我們致力於保護您的數據安全。</p>
+        </div>
+
+        <!-- ==================== 🎤 3. 主播考核視圖 (男性) ==================== -->
+        <div id="view-anchor-onboarding" class="flex-1 overflow-y-auto no-scrollbar px-8 flex flex-col relative z-10 hidden animate-slide-up">
+            <div class="pt-20 mb-10 text-center">
+                <div class="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-amber-500/20">
+                    <i data-lucide="mic-vocal" class="w-10 h-10 text-amber-500"></i>
+                </div>
+                <h2 class="text-2xl font-black text-white">主播考核中心</h2>
+                <p class="text-xs text-gray-400 mt-2">成為 MaskedSoul 主播，用聲音創造收入。</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="glass p-5 rounded-3xl border-l-4 border-amber-500">
+                    <h3 class="text-sm font-bold text-white mb-1">任務：聲線初選</h3>
+                    <p class="text-[10px] text-gray-500">上傳一段您最擅長的深夜讀詩或唱歌片段。</p>
+                    <button class="mt-3 text-[10px] font-bold text-amber-500 border border-amber-500/30 px-4 py-2 rounded-full hover:bg-amber-500 hover:text-black transition-all">開始錄音</button>
+                </div>
+                <div class="glass p-6 rounded-3xl text-center bg-amber-500/5">
+                    <p class="text-[10px] text-gray-500 mb-2 uppercase">您的收益分成權益</p>
+                    <div class="flex justify-center items-center space-x-8">
+                        <div class="text-center"><span class="text-3xl font-black text-amber-500">60%</span><p class="text-[8px] text-gray-400">主播佣金</p></div>
+                        <div class="text-center"><span class="text-2xl font-black text-gray-700">40%</span><p class="text-[8px] text-gray-400">平台服務</p></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="window.location.reload()" class="mt-10 py-4 glass rounded-full text-[10px] text-gray-500 font-bold">登出並返回</button>
+        </div>
+
+        <!-- ==================== 🏠 4. 直播大廳 (女性) ==================== -->
+        <div id="view-lobby" class="hidden flex-1 overflow-y-auto no-scrollbar flex flex-col relative w-full h-full pb-24 z-10 animate-fade-in">
+            <div class="px-6 pt-14 pb-4 sticky top-0 bg-black/60 backdrop-blur-3xl z-30 flex justify-between items-center border-b border-white/5">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="venetian-mask" class="w-6 h-6 text-amber-500"></i>
+                    <span class="text-xl font-black text-white tracking-widest">靈魂港灣</span>
+                </div>
+                <button onclick="window.switchTab('wallet')" class="flex items-center bg-gray-800/80 px-4 py-2 rounded-full border border-white/10">
+                    <i data-lucide="diamond" class="w-3 h-3 text-purple-400 mr-2"></i>
+                    <span id="lobby-balance" class="text-[11px] font-black">0</span>
+                </button>
+            </div>
+
+            <!-- ✨ 限時驚喜彈窗 -->
+            <div id="offer-toast" class="mx-6 my-4 animate-slide-up hidden">
+                <div class="bg-gradient-to-r from-rose-600 to-pink-500 p-5 rounded-[30px] flex justify-between items-center shadow-2xl relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-[9px] font-black text-white/60 uppercase tracking-widest">女神專屬補貼</p>
+                        <h4 class="text-sm font-black text-white mt-1">領取「心靈初遇」儲值券</h4>
+                        <p class="text-[8px] text-rose-100">首充即送 1,000 靈魂點數</p>
+                    </div>
+                    <button class="bg-white text-rose-600 text-[10px] font-black px-6 py-2.5 rounded-full shadow-lg relative z-10">領取代碼</button>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 grid grid-cols-2 gap-4">
+                <!-- 模擬直播房間 -->
+                <div onclick="alert('進入直播間...')" class="relative aspect-[3/4] rounded-[35px] overflow-hidden glass border border-white/5 group">
+                    <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300" class="absolute inset-0 w-full h-full object-cover masked opacity-80 group-hover:scale-110 transition-transform duration-1000">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-5 left-4 right-4">
+                        <p class="text-[11px] font-bold text-white">奧斯頓：深夜歌聲</p>
+                        <p class="text-[8px] text-amber-500 mt-1 uppercase tracking-widest">Healing Voice</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 💳 5. 心靈儲值咭 (Wallet) ==================== -->
+        <div id="view-wallet" class="hidden flex-1 overflow-y-auto no-scrollbar px-6 py-14 pb-[110px] z-10 animate-fade-in relative">
+            <h2 class="text-center font-black text-amber-500 mb-10 uppercase tracking-widest">心靈銀行 | My Wallet</h2>
+            
+            <div class="space-y-6">
+                <!-- 心靈儲值咭 -->
+                <div class="bg-gradient-to-br from-indigo-900 via-[#1a1b3a] to-black p-8 rounded-[45px] border border-indigo-500/30 shadow-3xl relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full"></div>
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <h3 class="text-xl font-black text-white tracking-wide">初遇 · 心靈咭</h3>
+                            <p class="text-[10px] text-indigo-300/60 uppercase font-bold">First Encounter Card</p>
+                        </div>
+                        <i data-lucide="sparkles" class="w-7 h-7 text-indigo-400"></i>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-gray-500 uppercase font-bold mb-1">包含點數</span>
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="diamond" class="w-5 h-5 text-indigo-400"></i>
+                                <span class="text-4xl font-black text-white">10,000</span>
+                            </div>
+                        </div>
+                        <button onclick="window.executeTopup(10000)" class="bg-white text-black px-8 py-3 rounded-[20px] text-xs font-black shadow-2xl active:scale-95 transition-all">HK$ 78</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 🛠️ 全域導航 ==================== -->
+        <div id="bottom-nav" class="hidden absolute bottom-0 left-0 right-0 h-[90px] bg-black/60 backdrop-blur-2xl border-t border-white/5 flex justify-around items-center px-10 z-50 rounded-b-[42px]">
+            <button onclick="window.switchTab('lobby')" id="nav-lobby" class="flex flex-col items-center space-y-1.5 transition-all text-rose-400">
+                <i data-lucide="compass" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase">發現</span>
+            </button>
+            <button onclick="window.switchTab('wallet')" id="nav-wallet" class="flex flex-col items-center space-y-1.5 text-gray-600">
+                <i data-lucide="credit-card" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase">錢包</span>
+            </button>
+        </div>
+
+        <!-- 語系 Modal -->
+        <div id="langModal" class="fixed inset-0 bg-black/95 hidden justify-center items-center z-[600] p-10 backdrop-blur-3xl animate-fade-in"><div class="w-full max-w-[320px] bg-[#111827] border border-gray-700 rounded-[50px] p-10 text-center shadow-2xl relative"><h3 class="text-xl font-black text-white mb-10 tracking-widest uppercase">Global Language</h3><div class="space-y-4"><button onclick="window.closeModal('langModal')" class="w-full py-4 glass rounded-3xl text-sm font-black text-white flex justify-between px-8 border border-gray-700"><span>繁體中文 (香港)</span><span>HK</span></button></div></div></div>
+    </div>
+
+    <!-- 🧠 JavaScript 核心系統 -->
+    <script>
+        lucide.createIcons();
+
+        // Firebase 初始化 (後端存儲路徑規劃)
+        const firebaseConfig = JSON.parse(__firebase_config);
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'maskedsoul-ultimate-prod';
+
+        let userId = null;
+        let userGender = null;
+
+        // --- ✨ 全棧認證邏輯 ---
+        window.onload = async () => {
+            createFX();
+            
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    // 從 Firestore 讀取用戶資料 (Rule 1 & 3)
+                    const profileRef = db.doc(`artifacts/${appId}/users/${userId}/profile/main`);
+                    const profile = await profileRef.get();
+                    
+                    if (profile.exists) {
+                        userGender = profile.data().gender;
+                        finishIntro();
+                    } else {
+                        // 新用戶，顯示註冊/連結視圖
+                        finishIntro(true);
+                    }
+                    syncWallet();
+                } else {
+                    // 自動匿名登入，確保後續操作合規 (Rule 3)
+                    await auth.signInAnonymously();
+                }
+            });
+        };
+
+        // 模擬社交登入按鈕
+        window.simulateSocialLogin = (platform) => {
+            const el = document.getElementById('reg-name');
+            el.value = `來自 ${platform} 的知音`;
+            alert(`✨ 已成功透過 ${platform} 獲取授權。請繼續選擇您的性別完成註冊。`);
+        };
+
+        function finishIntro(showAuth = false) {
+            setTimeout(() => {
+                document.getElementById('intro-screen').classList.add('opacity-0');
+                setTimeout(() => {
+                    document.getElementById('intro-screen').style.display = 'none';
+                    if (showAuth) {
+                        document.getElementById('view-auth').classList.remove('hidden');
+                    } else {
+                        routeUser();
+                    }
+                }, 1000);
+            }, 2500);
+        }
+
+        // 男女分流路由
+        function routeUser() {
+            if (userGender === 'male') {
+                document.getElementById('view-anchor-onboarding').classList.remove('hidden');
+                document.getElementById('bottom-nav').classList.add('hidden');
+            } else {
+                document.getElementById('view-lobby').classList.remove('hidden');
+                document.getElementById('bottom-nav').classList.remove('hidden');
+                document.getElementById('bottom-nav').classList.add('flex');
+                
+                // 女性用戶專屬變現點：延遲彈出優惠
+                setTimeout(() => {
+                    document.getElementById('offer-toast').classList.remove('hidden');
+                }, 5000);
+            }
+        }
+
+        window.selectGender = (gender) => {
+            userGender = gender;
+            document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`gender-${gender}`).classList.add('active');
+        };
+
+        window.handleRegistration = async () => {
+            const name = document.getElementById('reg-name').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
+            if (!name || !userGender) return alert("請輸入您的稱呼並選擇性別。");
+
+            // 保存至數據庫 (Rule 1: Strict Paths)
+            await db.doc(`artifacts/${appId}/users/${userId}/profile/main`).set({
+                name, phone: phone || "Linked Account", gender: userGender,
+                registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
+                isAnchor: (userGender === 'male')
+            });
+
+            document.getElementById('view-auth').classList.add('hidden');
+            routeUser();
+        };
+
+        // 錢包點數同步 (Rule 2: No Complex Query)
+        async function syncWallet() {
+            if (!userId) return;
+            const walletDoc = db.doc(`artifacts/${appId}/users/${userId}/wallet/main`);
+            walletDoc.onSnapshot((doc) => {
+                const bal = doc.exists ? (doc.data().balance || 0) : 0;
+                const lobbyBal = document.getElementById('lobby-balance');
+                if (lobbyBal) lobbyBal.innerText = bal.toLocaleString();
+                const profileBal = document.getElementById('profile-balance');
+                if (profileBal) profileBal.innerText = bal.toLocaleString();
+            });
+        }
+
+        window.executeTopup = async (amt) => {
+            const walletDoc = db.doc(`artifacts/${appId}/users/${userId}/wallet/main`);
+            const snap = await walletDoc.get();
+            const current = snap.exists ? snap.data().balance : 0;
+            await walletDoc.set({ balance: current + amt }, { merge: true });
+            alert('🎉 能量補充成功！');
+        };
+
+        window.switchTab = (name) => {
+            ['lobby', 'wallet'].forEach(t => {
+                const el = document.getElementById(`view-${t}`);
+                if (el) el.classList.add('hidden');
+            });
+            const activeView = document.getElementById(`view-${name}`);
+            if (activeView) activeView.classList.remove('hidden');
+            
+            const navLobby = document.getElementById('nav-lobby');
+            if (navLobby) navLobby.style.color = (name === 'lobby') ? 'var(--theme-primary)' : '#4b5563';
+            const navWallet = document.getElementById('nav-wallet');
+            if (navWallet) navWallet.style.color = (name === 'wallet') ? 'var(--theme-primary)' : '#4b5563';
+        };
+
+        function createFX() {
+            const sc = document.getElementById('sparkle-container');
+            sc.innerHTML = '';
+            for(let i=0; i<35; i++) {
+                const s = document.createElement('div'); s.className = 'sparkle';
+                s.style.width = s.style.height = Math.random()*3+1+'px';
+                s.style.top = Math.random()*100+'%'; s.style.left = Math.random()*100+'%';
+                s.style.setProperty('--duration', (Math.random()*8+12)+'s');
+                sc.appendChild(s);
+            }
+        }
+
+        window.showModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+    </script>
+</body>
+</html>
